@@ -32,25 +32,31 @@ const ContextProvider = (props) => {
         setResultData("");
         setLoading(true);
         setShowResult(true);
-        setRecentPrompt(input)
-        setPrevPrompt(prev=>[...prev,input])
-        const response = await run(input)
-        // let responseArray = response.split("**");
-        // let newResponse;
-        // for(let i=0;i<responseArray.length;i++){
-        //     if(i === 0 || i%2 !== 1){
-        //         newResponse += responseArray[i];
-        //     }
-        //     else{
-        //         newResponse += "<b>"+responseArray[i]+"</b>";
-        //     }
-        // }
-        let newResponse2 = processText(response)
-        // newResponse2 = newResponse.split("*").join("</br>")
-        // newResponse2.replace(/## (.+)\n/, '<h1>$1</h1><br><br>')
-        
+        let response;
+        if(prompt !== undefined){
+            response = await run(prompt);
+            setRecentPrompt(prompt);
+        }
+        else{
+            setPrevPrompt(prev=>[...prev,input])
+            setRecentPrompt(input)
+            response = await run(input)
+        }
+        let responseArray = response.split("**");
+        let newResponse = "";
+        for(let i=0;i<responseArray.length;i++){
+            if(i === 0 || i%2 !== 1){
+                newResponse += responseArray[i];
+            }
+            else{
+                newResponse += "<b>"+responseArray[i]+"</b>";
+            }
+        }
+        // let newResponse2 = processText(response)
+        let newResponse2 = newResponse.split("*").join("</br>")
+        let newResponse3 = processText(newResponse2)
         //let newResponseArray = newResponse2.split(" ");
-        let newResponseArray = newResponse2.split(" ")
+        let newResponseArray = newResponse3.split(" ")
         for(let i=0;i<newResponseArray.length;i++){
             const nextWord = newResponseArray[i];
             delayPara(i,nextWord+" ")
