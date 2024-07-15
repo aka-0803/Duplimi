@@ -3,9 +3,7 @@ import run from "../config/gemini";
 
 export const Context = createContext();
 
-const delayPara = (index,nextWord)=>{
 
-}
 
 const ContextProvider = (props) => {
     
@@ -16,14 +14,48 @@ const ContextProvider = (props) => {
     const [loading,setLoading] = useState(false);
     const [resultData,setResultData] = useState("");
 
+    const delayPara = (index,nextWord)=>{
+        setTimeout(function () {
+            setResultData(prev=>prev+nextWord);
+        },75*index)
+    }
+    const processText = (text) => {
+        // Replace ## with <h1> tags
+        text = text.replace(/## (.+)/g, '<h1>$1</h1>');
+        // Replace ** with <b> tags
+        text = text.replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
+        // Replace * with <br> tags 
+        text = text.replace(/\*/g, '<br>');
+        return text;
+      };
     const onSent = async(prompt)=>{
         setResultData("");
         setLoading(true);
         setShowResult(true);
         setRecentPrompt(input)
+        setPrevPrompt(prev=>[...prev,input])
         const response = await run(input)
-        // let responseArray
-        setResultData(response)
+        // let responseArray = response.split("**");
+        // let newResponse;
+        // for(let i=0;i<responseArray.length;i++){
+        //     if(i === 0 || i%2 !== 1){
+        //         newResponse += responseArray[i];
+        //     }
+        //     else{
+        //         newResponse += "<b>"+responseArray[i]+"</b>";
+        //     }
+        // }
+        let newResponse2 = processText(response)
+        // newResponse2 = newResponse.split("*").join("</br>")
+        // newResponse2.replace(/## (.+)\n/, '<h1>$1</h1><br><br>')
+        
+        //let newResponseArray = newResponse2.split(" ");
+        let newResponseArray = newResponse2.split(" ")
+        for(let i=0;i<newResponseArray.length;i++){
+            const nextWord = newResponseArray[i];
+            delayPara(i,nextWord+" ")
+        }
+        // setResultData(newResponse2)
         setLoading(false)
         setInput("")
 
