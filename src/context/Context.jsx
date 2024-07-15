@@ -19,6 +19,12 @@ const ContextProvider = (props) => {
             setResultData(prev=>prev+nextWord);
         },75*index)
     }
+
+    const newChat = ()=>{
+        setLoading(false)
+        setShowResult(false)
+    }
+
     const processText = (text) => {
         // Replace ## with <h1> tags
         text = text.replace(/## (.+)/g, '<h1>$1</h1>');
@@ -78,7 +84,8 @@ const ContextProvider = (props) => {
         resultData,
         loading,
         input,
-        setInput
+        setInput,
+        newChat
     }
 
     return (
